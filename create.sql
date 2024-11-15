@@ -26,7 +26,7 @@ CREATE TABLE USERS (
 
 --Create Citizen
 CREATE TABLE CITIZEN (
-    citizen_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    citizen_id VARCHAR(13) PRIMARY KEY,
     first_name VARCHAR(32) NOT NULL,
     middle_name VARCHAR(32),
     last_name VARCHAR(32) NOT NULL
@@ -37,6 +37,8 @@ CREATE TABLE BUDDY (
     buddy_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     withdrawable_coin_amount DOUBLE PRECISION NOT NULL,
     FOREIGN KEY (buddy_id) REFERENCES USERS(User_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 -- Create SERVICE_TYPE Table
@@ -53,6 +55,8 @@ CREATE TABLE CUSTOMER (
     location TEXT NOT NULL,
     coin_amount DOUBLE PRECISION NOT NULL,
 	FOREIGN KEY (customer_id) REFERENCES USERS(user_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 -- Create CUSTOMER_SERVICE_TYPE Table
@@ -61,6 +65,8 @@ CREATE TABLE CUSTOMER_SERVICE_TYPE (
     service_type BIGINT NOT NULL,
     PRIMARY KEY (customer_id, service_type),
     FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 -- Create CUSTOMER_PREFERENCE_TAG Table
@@ -69,6 +75,8 @@ CREATE TABLE CUSTOMER_PREFERENCE_TAG (
     tag UUID NOT NULL,
     PRIMARY KEY (customer_id, tag),
     FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 -- Create RESERVATION_RECORD Table
@@ -82,6 +90,8 @@ CREATE TABLE RESERVATION_RECORD (
     buddy_id UUID NOT NULL,
     FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id),
     FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 -- Create SERVICE_RECORD Table
@@ -93,10 +103,18 @@ CREATE TABLE SERVICE_RECORD (
     type_id BIGINT NOT NULL,
     customer_id UUID NOT NULL,
     buddy_id UUID NOT NULL,
-    FOREIGN KEY (reservation_id) REFERENCES RESERVATION_RECORD(reservation_id),
-    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id),
-    FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id),
+    FOREIGN KEY (reservation_id) REFERENCES RESERVATION_RECORD(reservation_id),\
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
     FOREIGN KEY (type_id) REFERENCES SERVICE_TYPE(type_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 --Create Buddy_Tag
@@ -105,6 +123,8 @@ CREATE TABLE BUDDY_TAG (
     tag VARCHAR(32) NOT NULL,
     PRIMARY KEY (buddy_id, tag),
     FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 --Create Buddy_service_type
@@ -112,8 +132,12 @@ CREATE TABLE BUDDY_SERVICE_TYPE (
     buddy_id UUID NOT NULL,
     service_types BIGINT NOT NULL,
     PRIMARY KEY (buddy_id, service_types),
-    FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id),
+    FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
 	FOREIGN KEY (service_types) REFERENCES SERVICE_TYPE(type_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 -- Create WITHDRAWAL_RECORD Table
@@ -125,6 +149,8 @@ CREATE TABLE WITHDRAWAL_RECORD (
     timestamp DATE NOT NULL,
     buddy_id UUID NOT NULL,
     FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 -- Create COIN_PURCHASE_RECORD Table
@@ -136,6 +162,8 @@ CREATE TABLE COIN_PURCHASE_RECORD (
     coin_amount DOUBLE PRECISION NOT NULL,
     customer_id UUID NOT NULL,
     FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 -- Create REPORT_TYPE Table
@@ -155,11 +183,21 @@ CREATE TABLE REPORT (
     type_id BIGINT NOT NULL,
     admin_id UUID NOT NULL,
     reservation_id UUID,
-    FOREIGN KEY (reporter_id) REFERENCES USERS(user_id),
-    FOREIGN KEY (reportee_id) REFERENCES USERS(user_id),
-    FOREIGN KEY (type_id) REFERENCES REPORT_TYPE(type_id),
-    FOREIGN KEY (admin_id) REFERENCES ADMIN(admin_id),
+    FOREIGN KEY (reporter_id) REFERENCES USERS(user_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    FOREIGN KEY (reportee_id) REFERENCES USERS(user_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    FOREIGN KEY (type_id) REFERENCES REPORT_TYPE(type_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    FOREIGN KEY (admin_id) REFERENCES ADMIN(admin_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
 	FOREIGN KEY (reservation_id) REFERENCES RESERVATION_RECORD(reservation_id)	
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
 );
 
 -- Create CHAT_MESSAGE Table
@@ -170,8 +208,12 @@ CREATE TABLE CHAT_MESSAGE (
     content TEXT NOT NULL,
     customer_id UUID NOT NULL,
     buddy_id UUID NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id),
+    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
     FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 -- Create REVIEW Table
@@ -182,6 +224,8 @@ CREATE TABLE REVIEW (
     rating DOUBLE PRECISION NOT NULL,
     description TEXT,
     FOREIGN KEY (service_id) REFERENCES SERVICE_RECORD(service_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 -- Create COIN_TRANSACTION Table
@@ -193,9 +237,15 @@ CREATE TABLE COIN_TRANSACTION (
     reservation_id UUID NOT NULL,
     customer_id UUID NOT NULL,
     buddy_id UUID NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id),
-    FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id),
+    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
 	FOREIGN KEY (reservation_id) REFERENCES RESERVATION_RECORD(reservation_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
 );
 
 -- Create MANAGE_USER Table
@@ -203,6 +253,10 @@ CREATE TABLE MANAGE_USER (
     admin_id UUID NOT NULL,
     user_id UUID NOT NULL,
     PRIMARY KEY (admin_id, user_id),
-    FOREIGN KEY (admin_id) REFERENCES ADMIN(admin_id),
+    FOREIGN KEY (admin_id) REFERENCES ADMIN(admin_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
     FOREIGN KEY (user_id) REFERENCES USERS(user_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
 );
