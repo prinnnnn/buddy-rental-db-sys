@@ -1,4 +1,4 @@
-Create Type GenderType as ENUM('Male', 'Female', 'Other');
+Create Type GenderType as ENUM('Male', 'Female', 'Other', 'Any');
 Create Type PaymentMethod as ENUM('MobileBanking', 'Credit/DebitCard', 'QRPayment');
 Create Type ReportStatus as ENUM('Pending', 'InProgress', 'Resolved');
 Create Type TransactionStatus as ENUM('Pending','Complete');
@@ -132,12 +132,12 @@ CREATE TABLE BUDDY_TAG (
 --Create Has_service_type
 CREATE TABLE HAS_SERVICE_TYPE (
     buddy_id UUID NOT NULL,
-    service_types SMALLINT NOT NULL,
+    service_type_id SMALLINT NOT NULL,
     PRIMARY KEY (buddy_id, service_types),
     FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-	FOREIGN KEY (service_types) REFERENCES SERVICE_TYPE(type_id)
+	FOREIGN KEY (service_type_id) REFERENCES SERVICE_TYPE(type_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
