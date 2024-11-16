@@ -46,7 +46,7 @@ CREATE TABLE BUDDY (
 
 -- Create SERVICE_TYPE Table
 CREATE TABLE SERVICE_TYPE (
-    type_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    type_id SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     description TEXT NOT NULL
 );
 
@@ -64,20 +64,23 @@ CREATE TABLE CUSTOMER (
     max_price DOUBLE PRECISION
 );
 
--- Create CUSTOMER_SERVICE_TYPE Table
-CREATE TABLE CUSTOMER_SERVICE_TYPE (
+-- Create PREFER_SERVICE_TYPE Table
+CREATE TABLE PREFER_SERVICE_TYPE (
     customer_id UUID NOT NULL,
-    service_type BIGINT NOT NULL,
-    PRIMARY KEY (customer_id, service_type),
+    service_type_id SMALLINT NOT NULL,
+    PRIMARY KEY (customer_id, service_type_id),
     FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    FOREIGN KEY (service_type_id) REFERENCES SERVICE_TYPE(type_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
 
--- Create CUSTOMER_PREFERENCE_TAG Table
-CREATE TABLE CUSTOMER_PREFERENCE_TAG (
+-- Create CUSTOMER_PREFERRED_TAG Table
+CREATE TABLE CUSTOMER_PREFERRED_TAG (
     customer_id UUID NOT NULL,
-    tag UUID NOT NULL,
+    tag VARCHAR(32) NOT NULL,
     PRIMARY KEY (customer_id, tag),
     FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id)
     ON DELETE CASCADE
@@ -105,7 +108,7 @@ CREATE TABLE SERVICE_RECORD (
     description TEXT,
     service_date DATE NOT NULL,
     reservation_id UUID NOT NULL,
-    type_id BIGINT NOT NULL,
+    type_id SMALLINT NOT NULL,
     customer_id UUID NOT NULL,
     buddy_id UUID NOT NULL,
     FOREIGN KEY (reservation_id) REFERENCES RESERVATION_RECORD(reservation_id)
@@ -126,10 +129,10 @@ CREATE TABLE BUDDY_TAG (
     ON UPDATE CASCADE
 );
 
---Create Buddy_service_type
-CREATE TABLE BUDDY_SERVICE_TYPE (
+--Create Has_service_type
+CREATE TABLE HAS_SERVICE_TYPE (
     buddy_id UUID NOT NULL,
-    service_types BIGINT NOT NULL,
+    service_types SMALLINT NOT NULL,
     PRIMARY KEY (buddy_id, service_types),
     FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id)
     ON DELETE CASCADE
@@ -163,7 +166,7 @@ CREATE TABLE COIN_PURCHASE_RECORD (
 
 -- Create REPORT_TYPE Table
 CREATE TABLE REPORT_TYPE (
-    type_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    type_id SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     type_description TEXT NOT NULL
 );
 
@@ -175,7 +178,7 @@ CREATE TABLE REPORT (
     content TEXT,
     reporter_id UUID NOT NULL,
     reportee_id UUID NOT NULL,
-    type_id BIGINT NOT NULL,
+    type_id SMALLINT NOT NULL,
     admin_id UUID NOT NULL,
     reservation_id UUID,
     FOREIGN KEY (reporter_id) REFERENCES USERS(user_id)
