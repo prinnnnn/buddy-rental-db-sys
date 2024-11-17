@@ -1,5 +1,4 @@
-Create Type GenderType as ENUM('Male', 'Female', 'Other');
-Create Type PreferenceGenderType as ENUM('Male', 'Female', 'Other', 'Any');
+Create Type GenderType as ENUM('Male', 'Female', 'Other', 'Any');
 Create Type PaymentMethod as ENUM('MobileBanking', 'Credit/DebitCard', 'QRPayment');
 Create Type ReportStatus as ENUM('Pending', 'InProgress', 'Resolved');
 Create Type TransactionStatus as ENUM('Pending','Complete');
@@ -58,7 +57,7 @@ CREATE TABLE SERVICE_TYPE (
 CREATE TABLE CUSTOMER (
     customer_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     coin_amount DOUBLE PRECISION NOT NULL,
-    gender PreferenceGenderType,
+    gender GenderType,
     age INTEGER,
     location TEXT NOT NULL,
 	FOREIGN KEY (customer_id) REFERENCES USERS(user_id)
