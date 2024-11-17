@@ -1,4 +1,5 @@
 Create Type GenderType as ENUM('Male', 'Female', 'Other');
+Create Type PreferenceGenderType as ENUM('Male', 'Female', 'Other', 'Any');
 Create Type PaymentMethod as ENUM('MobileBanking', 'Credit/DebitCard', 'QRPayment');
 Create Type ReportStatus as ENUM('Pending', 'InProgress', 'Resolved');
 Create Type TransactionStatus as ENUM('Pending','Complete');
@@ -31,9 +32,7 @@ CREATE TABLE USERS (
     display_name VARCHAR(32) NOT NULL,
     picture_link TEXT,
     description TEXT,
-    user_type AccountType,
-	FOREIGN KEY (citizen_id) REFERENCES CITIZEN(citizen_id) ON DELETE CASCADE
-
+    user_type AccountType
 );
 
 --Create Buddy
@@ -58,7 +57,7 @@ CREATE TABLE SERVICE_TYPE (
 CREATE TABLE CUSTOMER (
     customer_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     coin_amount DOUBLE PRECISION NOT NULL,
-    gender GenderType,
+    gender PreferenceGenderType,
     age INTEGER,
     location TEXT NOT NULL,
 	FOREIGN KEY (customer_id) REFERENCES USERS(user_id)
@@ -136,12 +135,12 @@ CREATE TABLE BUDDY_TAG (
 --Create Has_service_type
 CREATE TABLE HAS_SERVICE_TYPE (
     buddy_id UUID NOT NULL,
-    service_types SMALLINT NOT NULL,
-    PRIMARY KEY (buddy_id, service_types),
+    service_type_id SMALLINT NOT NULL,
+    PRIMARY KEY (buddy_id, service_type_id),
     FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-	FOREIGN KEY (service_types) REFERENCES SERVICE_TYPE(type_id)
+	FOREIGN KEY (service_type_id) REFERENCES SERVICE_TYPE(type_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
