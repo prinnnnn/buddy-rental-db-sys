@@ -1,20 +1,23 @@
-Create Type GenderType as ENUM('Male', 'Female', 'Other', 'Any');
+Create Type GenderType as ENUM('Male', 'Female', 'Other');
 Create Type PaymentMethod as ENUM('MobileBanking', 'Credit/DebitCard', 'QRPayment');
 Create Type ReportStatus as ENUM('Pending', 'InProgress', 'Resolved');
 Create Type TransactionStatus as ENUM('Pending','Complete');
 Create Type AccountType as ENUM('Buddy','Customer', 'Both');
 Create Type ReservationStatus as ENUM('Incomplete', 'During Service', 'Complete');
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";  -- Ensure the UUID extension is enabled
+
 CREATE TABLE ADMIN (
-    admin_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    admin_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     first_name VARCHAR(32) NOT NULL,
     middle_name VARCHAR(32),
     last_name VARCHAR(32) NOT NULL
 );
 
 CREATE TABLE USERS (
-    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     citizen_id VARCHAR(13) NOT NULL,
+    FOREIGN KEY (citizen_id) REFERENCES CITIZEN(citizen_id) ON DELETE CASCADE,
     gender GenderType NOT NULL,
     address TEXT,
     phone_number VARCHAR(12),
@@ -34,7 +37,7 @@ CREATE TABLE CITIZEN (
 
 --Create Buddy
 CREATE TABLE BUDDY (
-    buddy_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    buddy_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     withdrawable_coin_amount DOUBLE PRECISION NOT NULL,
     FOREIGN KEY (buddy_id) REFERENCES USERS(User_id)
     ON DELETE CASCADE
@@ -52,7 +55,7 @@ CREATE TABLE SERVICE_TYPE (
 
 -- Create CUSTOMER Table
 CREATE TABLE CUSTOMER (
-    customer_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    customer_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     coin_amount DOUBLE PRECISION NOT NULL,
     gender GenderType,
     age INTEGER,
@@ -89,7 +92,7 @@ CREATE TABLE CUSTOMER_PREFERRED_TAG (
 
 -- Create RESERVATION_RECORD Table
 CREATE TABLE RESERVATION_RECORD (
-    reservation_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    reservation_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     price_coin DOUBLE PRECISION NOT NULL,
     reservation_date DATE NOT NULL,
     status ReservationStatus NOT NULL,
@@ -104,7 +107,7 @@ CREATE TABLE RESERVATION_RECORD (
 
 -- Create SERVICE_RECORD Table
 CREATE TABLE SERVICE_RECORD (
-    service_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    service_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     description TEXT,
     service_date DATE NOT NULL,
     reservation_id UUID NOT NULL,
@@ -132,19 +135,19 @@ CREATE TABLE BUDDY_TAG (
 --Create Has_service_type
 CREATE TABLE HAS_SERVICE_TYPE (
     buddy_id UUID NOT NULL,
-    service_type_id SMALLINT NOT NULL,
+    service_types SMALLINT NOT NULL,
     PRIMARY KEY (buddy_id, service_types),
     FOREIGN KEY (buddy_id) REFERENCES BUDDY(buddy_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-	FOREIGN KEY (service_type_id) REFERENCES SERVICE_TYPE(type_id)
+	FOREIGN KEY (service_types) REFERENCES SERVICE_TYPE(type_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
 
 -- Create WITHDRAWAL_RECORD Table
 CREATE TABLE WITHDRAWAL_RECORD (
-    withdraw_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    withdraw_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     bank_information VARCHAR(64) NOT NULL,
     exchange_rate DOUBLE PRECISION NOT NULL,
     coin_amount DOUBLE PRECISION NOT NULL,
@@ -155,7 +158,7 @@ CREATE TABLE WITHDRAWAL_RECORD (
 
 -- Create COIN_PURCHASE_RECORD Table
 CREATE TABLE COIN_PURCHASE_RECORD (
-    purchase_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    purchase_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     payment_method PaymentMethod NOT NULL,
     timestamp DATE NOT NULL,
     cash_price DOUBLE PRECISION NOT NULL,
@@ -172,7 +175,7 @@ CREATE TABLE REPORT_TYPE (
 
 -- Create REPORT Table
 CREATE TABLE REPORT (
-    report_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    report_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     status ReportStatus NOT NULL,
     timestamp DATE NOT NULL,
     content TEXT,
@@ -195,7 +198,7 @@ CREATE TABLE REPORT (
 
 -- Create CHAT_MESSAGE Table
 CREATE TABLE CHAT_MESSAGE (
-    message_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    message_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     timestamp DATE NOT NULL,
     read_status BOOLEAN NOT NULL,
     content TEXT NOT NULL,
@@ -210,7 +213,7 @@ CREATE TABLE CHAT_MESSAGE (
 -- Create REVIEW Table
 CREATE TABLE REVIEW (
     service_id UUID NOT NULL,
-    review_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    review_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     timestamp DATE NOT NULL,
     rating DOUBLE PRECISION NOT NULL,
     description TEXT,
@@ -221,7 +224,7 @@ CREATE TABLE REVIEW (
 
 -- Create COIN_TRANSACTION Table
 CREATE TABLE COIN_TRANSACTION (
-    transaction_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    transaction_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     fee_rate DOUBLE PRECISION NOT NULL,
     status TransactionStatus NOT NULL,
     timestamp DATE NOT NULL,
