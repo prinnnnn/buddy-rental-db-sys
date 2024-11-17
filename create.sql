@@ -32,7 +32,8 @@ CREATE TABLE USERS (
     display_name VARCHAR(32) NOT NULL,
     picture_link TEXT,
     description TEXT,
-    user_type AccountType
+    user_type AccountType,
+    FOREIGN KEY (citizen_id) REFERENCES CITIZEN(citizen_id) ON DELETE CASCADE
 );
 
 --Create Buddy
