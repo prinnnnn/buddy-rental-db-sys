@@ -14,25 +14,26 @@ CREATE TABLE ADMIN (
     last_name VARCHAR(32) NOT NULL
 );
 
-CREATE TABLE USERS (
-    user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    citizen_id VARCHAR(13) NOT NULL,
-    FOREIGN KEY (citizen_id) REFERENCES CITIZEN(citizen_id) ON DELETE CASCADE,
-    gender GenderType NOT NULL,
-    address TEXT,
-    phone_number VARCHAR(12),
-    display_name VARCHAR(32) NOT NULL,
-    picture_link TEXT,
-    description TEXT,
-    user_type AccountType
-);
-
 --Create Citizen
 CREATE TABLE CITIZEN (
     citizen_id VARCHAR(13) PRIMARY KEY,
     first_name VARCHAR(32) NOT NULL,
     middle_name VARCHAR(32),
     last_name VARCHAR(32) NOT NULL
+);
+
+CREATE TABLE USERS (
+    user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    citizen_id VARCHAR(13) NOT NULL,
+    gender GenderType NOT NULL,
+    address TEXT,
+    phone_number VARCHAR(12),
+    display_name VARCHAR(32) NOT NULL,
+    picture_link TEXT,
+    description TEXT,
+    user_type AccountType,
+	FOREIGN KEY (citizen_id) REFERENCES CITIZEN(citizen_id) ON DELETE CASCADE
+
 );
 
 --Create Buddy
