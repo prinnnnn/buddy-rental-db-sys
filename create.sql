@@ -24,7 +24,7 @@ CREATE TABLE CITIZEN (
 
 CREATE TABLE USERS (
     user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    citizen_id VARCHAR(13) NOT NULL,
+    citizen_id VARCHAR(13) NOT NULL UNIQUE,
     gender GenderType NOT NULL,
     address TEXT,
     phone_number VARCHAR(12),
@@ -32,7 +32,8 @@ CREATE TABLE USERS (
     picture_link TEXT,
     description TEXT,
     user_type AccountType,
-    FOREIGN KEY (citizen_id) REFERENCES CITIZEN(citizen_id) ON DELETE CASCADE
+    FOREIGN KEY (citizen_id) REFERENCES CITIZEN(citizen_id)
+    ON DELETE CASCADE
 );
 
 --Create Buddy
